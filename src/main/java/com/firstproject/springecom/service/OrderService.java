@@ -35,7 +35,7 @@ public class OrderService {
         order.setStatus("PLACED");
         order.setOrderDate(LocalDate.now());
 
-        List<OrderItem> orderItems = new ArrayList<>();
+        List orderItems = new ArrayList<>();
         for(OrderItemRequest itemReq : orderRequest.items()) {
             Product product = productRepository.findById(itemReq.productId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -56,13 +56,13 @@ public class OrderService {
         order.setOrderItems(orderItems);
         Order savedOrder = orderRepository.save(order);
 
-        List<OrderItemResponse> itemResponses = new ArrayList<>();
+        List itemResponses = new ArrayList<>();
         for(OrderItem item : order.getOrderItems()) {
             OrderItemResponse orderItemResponse = new OrderItemResponse(
                     item.getProduct().getName(),
                     item.getQuantity(),
                     item.getTotalPrice()
-                    );
+            );
         }
 
         OrderResponse orderResponse = new OrderResponse(savedOrder.getOrderId(),
@@ -71,12 +71,38 @@ public class OrderService {
                 savedOrder.getStatus(),
                 savedOrder.getOrderDate(),
                 itemResponses
-                );
+        );
 
         return orderResponse;
     }
 
-    /* List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll();
-    }*/
+    public List<OrderResponse> getAllOrders() {
+        List<Order> orders = orderRepository.findAll();
+        List<OrderResponse> orderResponses = new ArrayList<>();
+
+        for(Order order : orders){
+            List<OrderItemResponse> itemResponses = new ArrayList<>();
+
+            for(OrderItem item : order.getOrderItems()) {
+                OrderItemResponse orderItemResponse = new OrderItemResponse(
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        item.getTotalPrice()
+                );
+                itemResponses.add(orderItemResponse);
+            }
+
+            OrderResponse orderResponse = new OrderResponse(
+                    order.getOrderId(),
+                    order.getCustomerName(),
+                    order.getEmail(),
+                    order.getStatus(),
+                    order.getOrderDate(),
+                    itemResponses
+            );
+
+            orderResponses.add(orderResponse);
+        }
+        return orderResponses;
+    }
 }

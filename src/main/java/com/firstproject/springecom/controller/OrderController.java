@@ -26,9 +26,9 @@ public class OrderController {
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 
-    /*@GetMapping("/orders")
+    @GetMapping("/orders")
     public ResponseEntity<List<OrderResponse>> getAllOrders() {
         List<OrderResponse> orderResponse = orderService.getAllOrders();
         return new ResponseEntity<>(orderResponse, HttpStatus.OK);
-    }*/
+    }
 }
